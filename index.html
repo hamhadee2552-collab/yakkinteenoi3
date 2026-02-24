@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+
+<meta charset="utf-8">
+
+<title>PM2.5 Map</title>
+
+<style>
+
+body{
+margin:0;
+text-align:center;
+font-family:Poppins;
+background:#f0f0f0;
+}
+
+.map{
+position:relative;
+display:inline-block;
+}
+
+.dot{
+
+position:absolute;
+width:80px;
+height:80px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+font-weight:bold;
+cursor:pointer;
+
+box-shadow:0 4px 15px rgba(0,0,0,0.2);
+
+}
+
+
+/* ===== pastel colors ===== */
+
+.verygood{
+
+background:#81d4fa;
+color:black;
+
+}
+
+.good{
+
+background:#a5d6a7;
+color:black;
+
+}
+
+.medium{
+
+background:#fff59d;
+color:black;
+
+}
+
+.bad{
+
+background:#ffcc80;
+color:black;
+
+}
+
+.verybad{
+
+background:#ef9a9a;
+color:white;
+
+}
+
+
+</style>
+
+</head>
+
+<body>
+
+
+<h1>🌸 School PM2.5 Map</h1>
+
+
+<div class="map">
+
+<img src="map.jpg" width="1200">
+
+
+<div id="astro" class="dot"
+style="top:60px; left:120px"
+onclick="location.href='astro.html'">-</div>
+
+
+<div id="canteen" class="dot"
+style="top:80px; left:450px"
+onclick="location.href='canteen.html'">-</div>
+
+
+<div id="council" class="dot"
+style="top:170px; left:520px"
+onclick="location.href='council.html'">-</div>
+
+
+<div id="stem" class="dot"
+style="top:140px; left:650px"
+onclick="location.href='stem.html'">-</div>
+
+
+<div id="phys" class="dot"
+style="top:320px; left:780px"
+onclick="location.href='phys.html'">-</div>
+
+
+</div>
+
+
+
+<script>
+
+
+const SHEETS={
+
+phys:"1COK9ynPaA6uaogMMlnQoTZ8SgiliCrqipJOfJHYgQVw",
+
+council:"14YBXIcFCx9bq8Jpn-wnGlBX_87Yg8_gqTDWZxQNPMEA",
+
+stem:"1XJiZsuLS1YYINWZRkOSrNfDSAwNj0jO0eZX2kboQfks",
+
+canteen:"1MDbX9wnS8tVfMUwnsQVqvijCdaRh_QO8PjYa4q3nMs8",
+
+astro:"14MnFUZLcxwUfZ8oAein2DVoTnHDzvrDeCQHl36-Enuw"
+
+};
+
+
+
+/* ===== scale ตามรูป ===== */
+
+function getColor(v){
+
+if(v<=25) return "verygood";
+
+if(v<=37) return "good";
+
+if(v<=50) return "medium";
+
+if(v<=90) return "bad";
+
+return "verybad";
+
+}
+
+
+
+async function load(room){
+
+const url=
+`https://docs.google.com/spreadsheets/d/${SHEETS[room]}/gviz/tq?tqx=out:json`;
+
+const res=await fetch(url);
+
+const txt=await res.text();
+
+const json=JSON.parse(txt.substr(47).slice(0,-2));
+
+const value=json.table.rows.at(-1).c[2].v;
+
+const el=document.getElementById(room);
+
+el.innerText=value;
+
+
+/* reset class */
+
+el.className="dot";
+
+
+/* add new color */
+
+el.classList.add(getColor(value));
+
+}
+
+
+
+function loadAll(){
+
+load("phys");
+load("stem");
+load("canteen");
+load("astro");
+load("council");
+
+}
+
+
+loadAll();
+
+
+setInterval(loadAll,60000);
+
+
+</script>
+
+
+</body>
+</html>

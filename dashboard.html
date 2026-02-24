@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+
+<meta charset="utf-8">
+
+<title>🌸 School PM2.5 Map</title>
+
+<style>
+
+body{
+
+margin:0;
+background:#f0f0f0;
+font-family:Poppins;
+text-align:center;
+
+}
+
+
+/* container */
+
+.map-container{
+
+position:relative;
+display:inline-block;
+
+}
+
+
+/* วงกลม */
+
+.circle{
+
+position:absolute;
+
+width:90px;
+height:90px;
+
+border-radius:50%;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:26px;
+font-weight:bold;
+
+cursor:pointer;
+
+border:4px solid rgba(255,255,255,0.9);
+
+backdrop-filter: blur(3px);
+
+transition:0.3s;
+
+}
+
+
+/* hover */
+
+.circle:hover{
+
+transform:scale(1.1);
+
+}
+
+
+
+/* ===== สีตามมาตรฐาน ===== */
+
+
+/* 0–25 ดีมาก ฟ้า */
+
+.verygood{
+
+background:rgba(0,180,255,0.45);
+color:black;
+
+box-shadow:
+
+0 0 25px rgba(0,180,255,0.9),
+
+0 0 50px rgba(0,180,255,0.6);
+
+}
+
+
+
+/* 26–37 ดี เขียว */
+
+.good{
+
+background:rgba(0,200,83,0.45);
+color:black;
+
+box-shadow:
+
+0 0 25px rgba(0,200,83,0.9),
+
+0 0 50px rgba(0,200,83,0.6);
+
+}
+
+
+
+/* 38–50 ปานกลาง เหลือง */
+
+.medium{
+
+background:rgba(255,214,0,0.45);
+color:black;
+
+box-shadow:
+
+0 0 25px rgba(255,214,0,0.9),
+
+0 0 50px rgba(255,214,0,0.6);
+
+}
+
+
+
+/* 51–90 เริ่มแย่ ส้ม */
+
+.bad{
+
+background:rgba(255,109,0,0.45);
+color:white;
+
+box-shadow:
+
+0 0 25px rgba(255,109,0,0.9),
+
+0 0 50px rgba(255,109,0,0.6);
+
+}
+
+
+
+/* 91+ แย่มาก แดง */
+
+.verybad{
+
+background:rgba(213,0,0,0.45);
+color:white;
+
+box-shadow:
+
+0 0 25px rgba(213,0,0,0.9),
+
+0 0 50px rgba(213,0,0,0.6);
+
+}
+
+
+
+</style>
+
+</head>
+
+
+
+<body>
+
+
+
+<h1>🌸 School PM2.5 Map</h1>
+
+
+
+<div class="map-container">
+
+
+
+<img src="map.jpg" width="1200">
+
+
+
+<!-- ดาราศาสตร์ -->
+
+<div id="astro"
+
+class="circle"
+
+style="top:90px; left:150px"
+
+onclick="go('astro')">-</div>
+
+
+
+<!-- โรงอาหาร -->
+
+<div id="canteen"
+
+class="circle"
+
+style="top:100px; left:300px"
+
+onclick="go('canteen')">-</div>
+
+
+
+<!-- สภา -->
+
+<div id="council"
+
+class="circle"
+
+style="top:170px; left:300px"
+
+onclick="go('council')">-</div>
+
+
+
+<!-- STEM -->
+
+<div id="stem"
+
+class="circle"
+
+style="top:160px; left:430px"
+
+onclick="go('stem')">-</div>
+
+
+
+<!-- ฟิสิกส์ -->
+
+<div id="phys"
+
+class="circle"
+
+style="top:300px; left:550px"
+
+onclick="go('phys')">-</div>
+
+
+
+</div>
+
+
+
+<script>
+
+
+
+/* ===== Sheet IDs ===== */
+
+const SHEETS={
+
+phys:"1COK9ynPaA6uaogMMlnQoTZ8SgiliCrqipJOfJHYgQVw",
+
+council:"14YBXIcFCx9bq8Jpn-wnGlBX_87Yg8_gqTDWZxQNPMEA",
+
+stem:"1XJiZsuLS1YYINWZRkOSrNfDSAwNj0jO0eZX2kboQfks",
+
+canteen:"1MDbX9wnS8tVfMUwnsQVqvijCdaRh_QO8PjYa4q3nMs8",
+
+astro:"14MnFUZLcxwUfZ8oAein2DVoTnHDzvrDeCQHl36-Enuw"
+
+};
+
+
+
+/* ===== ไปหน้าแต่ละห้อง ===== */
+
+function go(room){
+
+location.href=room+".html";
+
+}
+
+
+
+/* ===== เลือกสี ===== */
+
+function getColor(v){
+
+if(v<=25) return "verygood";
+
+if(v<=37) return "good";
+
+if(v<=50) return "medium";
+
+if(v<=90) return "bad";
+
+return "verybad";
+
+}
+
+
+
+/* ===== โหลดข้อมูล ===== */
+
+async function load(room){
+
+const url=
+
+`https://docs.google.com/spreadsheets/d/${SHEETS[room]}/gviz/tq?tqx=out:json`;
+
+
+
+const res=await fetch(url);
+
+const txt=await res.text();
+
+
+
+const json=
+
+JSON.parse(txt.substr(47).slice(0,-2));
+
+
+
+const value=
+
+json.table.rows.at(-1).c[2].v;
+
+
+
+const el=
+
+document.getElementById(room);
+
+
+
+el.innerText=value;
+
+
+
+el.className=
+
+"circle "+getColor(value);
+
+}
+
+
+
+/* ===== โหลดทั้งหมด ===== */
+
+function loadAll(){
+
+load("phys");
+
+load("stem");
+
+load("canteen");
+
+load("astro");
+
+load("council");
+
+}
+
+
+
+loadAll();
+
+
+
+/* realtime */
+
+setInterval(loadAll,60000);
+
+
+
+</script>
+
+
+
+</body>
+
+</html>
