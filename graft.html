@@ -23,7 +23,6 @@ background:linear-gradient(120deg,#ffe0ec,#ffd6e7);
 max-width:1200px;
 margin:auto;
 padding:20px;
-overflow-x:auto;
 }
 
 h1{
@@ -64,7 +63,6 @@ background:white;
 padding:20px;
 border-radius:20px;
 box-shadow:0 5px 15px rgba(0,0,0,0.2);
-min-width:2000px;
 }
 
 </style>
@@ -170,7 +168,7 @@ astro:new Array(10).fill(null)
 function generateLabels(){
 
 const now=new Date();
-const start=Math.floor(now.getMinutes()/10)*10;
+const start=Math.floor(now.getMinutes()/20)*20;
 const hour=now.getHours();
 
 labels=[];
@@ -180,7 +178,7 @@ for(let i=0;i<10;i++){
 labels.push(
 hour.toString().padStart(2,'0')
 +":"
-+(start+i).toString().padStart(2,'0')
++(start+(i*2)).toString().padStart(2,'0')
 );
 
 }
@@ -213,7 +211,7 @@ const now=new Date();
 
 const minute=now.getMinutes();
 
-const slot=Math.floor(minute/10);
+const slot=Math.floor(minute/20);
 
 
 if(currentSlot===null){
@@ -248,7 +246,7 @@ chart.data.labels=labels;
 }
 
 
-const start=Math.floor(minute/10)*10;
+const start=Math.floor(minute/20)*20;
 
 const index=minute-start;
 
