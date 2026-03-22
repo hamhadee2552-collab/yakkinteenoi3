@@ -248,7 +248,7 @@ chart.data.labels=labels;
 
 const start=Math.floor(minute/20)*20;
 
-const index=minute-start;
+const index=Math.floor((minute-start)/2);
 
 
 const phys=await getLatest(SHEETS.phys);
